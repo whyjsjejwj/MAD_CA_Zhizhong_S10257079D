@@ -24,7 +24,9 @@ fun GameScreen(
 ) {
 
     val context = LocalContext.current
+    val highScoreManager = remember { HighScoreManager(context) }
 
+    var highScore by remember { mutableIntStateOf(highScoreManager.getHighScore()) }
 
     var score by remember { mutableIntStateOf(0) }
     var timeLeft by remember { mutableIntStateOf(30) }
@@ -39,6 +41,11 @@ fun GameScreen(
                 timeLeft--
             }
             isPlaying = false
+
+            if (score > highScore) {
+                highScore = score
+                highScoreManager.saveHighScore(score)
+            }
 
             showGameOverDialog = true
             targetIndex = -1
@@ -94,6 +101,10 @@ fun GameScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("SCORE", fontSize = 14.sp, color = Color.Gray)
                     Text("$score", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("BEST", fontSize = 14.sp, color = Color.Gray)
+                    Text("$highScore", fontSize = 28.sp, fontWeight = FontWeight.Bold)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("TIME", fontSize = 14.sp, color = Color.Gray)
@@ -163,7 +174,7 @@ fun GameScreen(
             AlertDialog(
                 onDismissRequest = { showGameOverDialog = false },
                 title = { Text("Game Over!") },
-                text = { Text("Final Score: $score") },
+                text = { Text("Final Score: $score\nHigh Score: $highScore") },
                 confirmButton = {
                     TextButton(onClick = { showGameOverDialog = false }) { Text("Close") }
                 }

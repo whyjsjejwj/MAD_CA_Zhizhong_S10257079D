@@ -13,11 +13,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
+                // Simple Navigation State: "game" or "settings"
                 var currentScreen by remember { mutableStateOf("game") }
 
                 if (currentScreen == "game") {
                     GameScreen(
-                        onNavigateToSettings = { }
+                        onNavigateToSettings = { currentScreen = "settings" }
+                    )
+                } else {
+                    SettingsScreen(
+                        onNavigateBack = { currentScreen = "game" }
                     )
                 }
             }
