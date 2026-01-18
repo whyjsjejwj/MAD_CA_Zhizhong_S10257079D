@@ -38,7 +38,10 @@ fun MoleHole(
             contentAlignment = Alignment.Center
         ) {
             if (isTarget) {
-                Text(text = "🐹", fontSize = 40.sp)
+                Text(
+                    text = "🐹",
+                    fontSize = 50.sp
+                )
             }
         }
     }
