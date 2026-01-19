@@ -72,7 +72,7 @@ fun GameScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "WHACK-A-MOLE",
+                text = "WACK-A-MOLE",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

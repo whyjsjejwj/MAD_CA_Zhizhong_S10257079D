@@ -19,14 +19,12 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    // 1. STATE VARIABLES
                     var isLoggedIn by remember { mutableStateOf(false) }
                     var currentScreen by remember { mutableStateOf("game") }
-                    var currentUser by remember { mutableStateOf("") } // Useful if you want to show username later
+                    var currentUser by remember { mutableStateOf("") }
 
-                    // 2. LOGIC FLOW
                     if (!isLoggedIn) {
-                        // --- STATE A: NOT LOGGED IN ---
+
                         LoginScreen(
                             onLoginSuccess = { username ->
                                 currentUser = username
@@ -34,7 +32,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     } else {
-                        // --- STATE B: LOGGED IN (Your requested logic) ---
+
                         if (currentScreen == "game") {
                             GameScreen(
                                 modifier = Modifier.padding(innerPadding),

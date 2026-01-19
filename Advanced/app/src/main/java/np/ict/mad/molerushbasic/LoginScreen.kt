@@ -30,7 +30,7 @@ fun LoginScreen(onLoginSuccess: (String) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "MoleRush Login", fontSize = 30.sp, style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Wack-A-Mole Login", fontSize = 30.sp, style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(32.dp))
 
