@@ -1,5 +1,6 @@
 package np.ict.mad.molerushbasic
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -15,17 +16,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import np.ict.mad.molerushbasic.data.AppDatabase
 import kotlin.random.Random
 
 @Composable
 fun GameScreen(
     modifier: Modifier = Modifier,
-    onNavigateToSettings: () -> Unit
+    currentUser: String,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToLeaderboard: () -> Unit
 ) {
-
     val context = LocalContext.current
-    val highScoreManager = remember { HighScoreManager(context) }
+    val scope = rememberCoroutineScope()
 
+    val userDao = remember { AppDatabase.getDatabase(context).userDao() }
+
+    val highScoreManager = remember { HighScoreManager(context) }
     var highScore by remember { mutableIntStateOf(highScoreManager.getHighScore()) }
 
     var score by remember { mutableIntStateOf(0) }
@@ -40,11 +47,20 @@ fun GameScreen(
                 delay(1000L)
                 timeLeft--
             }
+
             isPlaying = false
 
             if (score > highScore) {
                 highScore = score
                 highScoreManager.saveHighScore(score)
+            }
+
+            launch {
+                val user = userDao.getUser(currentUser)
+                if (user != null && score > user.highScore) {
+                    userDao.updateScore(currentUser, score)
+                    Toast.makeText(context, "New Leaderboard Record!", Toast.LENGTH_SHORT).show()
+                }
             }
 
             showGameOverDialog = true
@@ -72,17 +88,27 @@ fun GameScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "WACK-A-MOLE",
+                text = "Whack-A-Mole",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
 
-            IconButton(onClick = onNavigateToSettings) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings"
-                )
+            Row {
+                Button(
+                    onClick = onNavigateToLeaderboard,
+                    modifier = Modifier.padding(end = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
+                ) {
+                    Text("Rank")
+                }
+
+                IconButton(onClick = onNavigateToSettings) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings"
+                    )
+                }
             }
         }
 

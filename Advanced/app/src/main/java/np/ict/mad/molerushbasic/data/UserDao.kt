@@ -14,4 +14,7 @@ interface UserDao {
 
     @Query("UPDATE users SET highScore = :newScore WHERE username = :username")
     suspend fun updateScore(username: String, newScore: Int)
+
+    @Query("SELECT * FROM users ORDER BY highScore DESC LIMIT 10")
+    suspend fun getTopScores(): List<User>
 }

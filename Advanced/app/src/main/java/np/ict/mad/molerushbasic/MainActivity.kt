@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
                     var currentUser by remember { mutableStateOf("") }
 
                     if (!isLoggedIn) {
-
                         LoginScreen(
                             onLoginSuccess = { username ->
                                 currentUser = username
@@ -32,17 +31,26 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     } else {
-
-                        if (currentScreen == "game") {
-                            GameScreen(
-                                modifier = Modifier.padding(innerPadding),
-                                onNavigateToSettings = { currentScreen = "settings" }
-                            )
-                        } else {
-                            SettingsScreen(
-                                modifier = Modifier.padding(innerPadding),
-                                onNavigateBack = { currentScreen = "game" }
-                            )
+                        when (currentScreen) {
+                            "game" -> {
+                                GameScreen(
+                                    modifier = Modifier.padding(innerPadding),
+                                    currentUser = currentUser,
+                                    onNavigateToSettings = { currentScreen = "settings" },
+                                    onNavigateToLeaderboard = { currentScreen = "leaderboard" }
+                                )
+                            }
+                            "settings" -> {
+                                SettingsScreen(
+                                    modifier = Modifier.padding(innerPadding),
+                                    onNavigateBack = { currentScreen = "game" }
+                                )
+                            }
+                            "leaderboard" -> {
+                                LeaderboardScreen(
+                                    onNavigateBack = { currentScreen = "game" }
+                                )
+                            }
                         }
                     }
                 }
