@@ -43,7 +43,12 @@ class MainActivity : ComponentActivity() {
                             "settings" -> {
                                 SettingsScreen(
                                     modifier = Modifier.padding(innerPadding),
-                                    onNavigateBack = { currentScreen = "game" }
+                                    onNavigateBack = { currentScreen = "game" },
+                                    onLogout = {
+                                        isLoggedIn = false
+                                        currentUser = ""
+                                        currentScreen = "game"
+                                    }
                                 )
                             }
                             "leaderboard" -> {

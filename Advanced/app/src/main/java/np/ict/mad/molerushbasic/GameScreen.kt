@@ -32,8 +32,7 @@ fun GameScreen(
 
     val userDao = remember { AppDatabase.getDatabase(context).userDao() }
 
-    val highScoreManager = remember { HighScoreManager(context) }
-    var highScore by remember { mutableIntStateOf(highScoreManager.getHighScore()) }
+    var highScore by remember { mutableIntStateOf(0) }
 
     var score by remember { mutableIntStateOf(0) }
     var timeLeft by remember { mutableIntStateOf(30) }
@@ -41,25 +40,28 @@ fun GameScreen(
     var targetIndex by remember { mutableIntStateOf(-1) }
     var showGameOverDialog by remember { mutableStateOf(false) }
 
+    LaunchedEffect(currentUser) {
+        val user = userDao.getUser(currentUser)
+        if (user != null) {
+            highScore = user.highScore
+        }
+    }
+
     LaunchedEffect(key1 = isPlaying) {
         if (isPlaying) {
             while (timeLeft > 0) {
                 delay(1000L)
                 timeLeft--
             }
-
             isPlaying = false
-
-            if (score > highScore) {
-                highScore = score
-                highScoreManager.saveHighScore(score)
-            }
 
             launch {
                 val user = userDao.getUser(currentUser)
+
                 if (user != null && score > user.highScore) {
                     userDao.updateScore(currentUser, score)
-                    Toast.makeText(context, "New Leaderboard Record!", Toast.LENGTH_SHORT).show()
+                    highScore = score
+                    Toast.makeText(context, "New Personal Best Saved!", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -67,7 +69,6 @@ fun GameScreen(
             targetIndex = -1
         }
     }
-
     LaunchedEffect(key1 = targetIndex, key2 = isPlaying) {
         if (isPlaying) {
             val randomDelay = Random.nextLong(700, 1000)
@@ -100,7 +101,7 @@ fun GameScreen(
                     modifier = Modifier.padding(end = 8.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
-                    Text("Rank")
+                    Text("🏆 Rank")
                 }
 
                 IconButton(onClick = onNavigateToSettings) {

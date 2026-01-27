@@ -32,7 +32,7 @@ fun LeaderboardScreen(onNavigateBack: () -> Unit) {
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("🏆 Hall of Fame 🏆", fontSize = 32.sp, fontWeight = FontWeight.Bold)
+        Text("Leaderboard", fontSize = 32.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(20.dp))
 
