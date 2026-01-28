@@ -16,13 +16,13 @@ The project is divided into two distinct applications to demonstrate progression
 
 ### 2. Advanced Version
 * **Location:** `Advanced/` folder
-* **Package Name:** `np.ict.mad.molerushadvanced` (Application ID)
+* **Package Name:** `np.ict.mad.molerushadvanced`
 * **Key Features:**
     * **User Authentication:** Full **Register** and **Login** system.
     * **Database Integration:** Implemented **Room Database** for secure storage of User credentials and personal High Scores.
     * **Advanced Navigation:** Logic to handle flow between `LoginScreen` -> `GameScreen` -> `SettingsScreen`.
     * **Architecture:** Separation of concerns using Data Access Objects (DAO), Entity classes, and Repository patterns.
-    * **Settings Menu:** Dedicated screen for game configuration (framework).
+    * **Settings Menu:** Dedicated screen for user logout.
 
 ---
 
@@ -39,7 +39,13 @@ The project is divided into two distinct applications to demonstrate progression
 
 ## Use of AI Tools and Learning Reflection
 ### 1. AI Tools Used
-**ChatGPT / Gemini** were used as the debugging assistants. The AI helped explain complex concepts (like Room Database setup) and troubleshoot build errors, while I wrote and integrated the final code logic.
+- **ChatGPT / Gemini** were used as the debugging assistants. The AI helped explain complex concepts (like Room Database setup) and troubleshoot build errors, while I wrote and integrated the final code logic. 
+
+- The AI tools were **not used to generate complete features or the full Wack-A-Mole application**. 
+
+- All final implementations were written, tested, and understood by me. 
+
+- The role of AI was limited to learning support, debugging assistance, and suggesting small, isolated code fragments that were critically evaluated and adapted.
 
 ### 2. Example Prompts Used
 Specific questions I asked during development included:
@@ -48,12 +54,15 @@ Specific questions I asked during development included:
 * *"How do I implement a Login Screen using Room Database in Jetpack Compose?"*
 * *"What is the correct KSP version for my Kotlin installation?"*
 
+These prompts were mainly asked during the **debugging and feature refinement stages**, not for generating complete screens or end-to-end functionality.
+
+
 ### 3. Code Generation & Refinement
 The AI provided initial code snippets for individual components (like the Timer or the Authentication setup), but I had to significantly modify and integrate them to build a cohesive application architecture.
 
 #### **Example A: Evolving the Game Loop Logic**
 **The AI Suggestion:**
-The AI initially provided a simple countdown timer loop. However, this was insufficient because the "Mole" needed to move at a different speed than the timer (e.g., the tierm ticks every 1 second, but the mole moves every 0.7 seconds).
+The AI initially provided a simple countdown timer loop. However, this was insufficient because the mole needed to move at a different speed than the timer (e.g. the timer ticks every 1 second, but the mole moves every 0.7 seconds).
 
 *Initial AI Snippet (Single Loop):*
 ```kotlin
@@ -61,11 +70,10 @@ The AI initially provided a simple countdown timer loop. However, this was insuf
 while (timeLeft > 0) {
     delay(1000)
     timeLeft--
-    // Mole moves at the same speed as the timer (Problematic)
     currentMoleIndex = Random.nextInt(9)
 }
 ```
-**My Refinement:** I modified the code to use two separate LaunchedEffect coroutines. This decoupled the timer from the game mechanics, allowing the Mole to move randomly and faster than the countdown clock without freezing the UI.
+**My Refinement:** I modified the code to use two separate LaunchedEffect coroutines. This decoupled the timer from the game mechanics, allowing the mole to move randomly and faster than the countdown clock without freezing the UI.
 
 *Refined Code:*
 ```kotlin
@@ -77,7 +85,6 @@ LaunchedEffect(isPlaying) {
     isPlaying = false
 }
 
-// 2. Mole Movement Loop (Runs independently, faster)
 LaunchedEffect(isPlaying) {
     while (timeLeft > 0) {
         delay(Random.nextLong(700, 1000))
@@ -88,18 +95,17 @@ LaunchedEffect(isPlaying) {
 
 #### **Example B: Handling Duplicate User Registration**
 **The AI Suggestion:**
-The AI provided a basic `register` function that directly inserted user data into the Room database. However, this logic was flawed because it didn't check if a username already existed. If a user tried to register a name that was already taken, the app would crash due to a **Primary Key Constraint violation**.
+The AI provided a basic `register` function that directly inserted user data into the Room database. However, this logic had issues because it didn't check if a username already existed. If a user tried to register a name that was already taken, the app would crash due to a **Primary Key Constraint violation**.
 
 *Initial AI Snippet (Unsafe Insert):*
 ```kotlin
-// AI suggestion: Inserts blindly
+// AI suggestion
 Button(onClick = {
-    // CRITICAL BUG: This crashes the app if "username" already exists in the DB
     userDao.register(User(username = username, password = password))
 })
 ```
 
-**My Refinement:** I refined the code to implement a "Check-Then-Act" validation flow. I wrapped the database operation in a Coroutine and added a pre-check query (getUser). The app now verifies if the username exists before attempting to insert it. If it exists, it gracefully shows a Toast error instead of crashing.
+**My Refinement:** I refined the code to implement a check first  validation flow. I wrapped the database operation in a coroutine and added a pre-check query (getUser). The app now verifies if the username exists before attempting to insert it.
 
 *Refined Code:*
 ```kotlin
@@ -107,15 +113,15 @@ scope.launch {
     val existingUser = userDao.getUser(username)
     
     if (existingUser != null) {
-        // 2. Handle duplicate error gracefully
         Toast.makeText(context, "Username already exists!", Toast.LENGTH_SHORT).show()
     } else {
-        // 3. Only insert if unique
         userDao.register(User(username = username, password = password))
         Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
     }
 }
 ```
+
+These prompts were mainly asked during the **debugging and feature refinement stages**, not for generating complete screens or end-to-end functionality.
 
 ---
 
@@ -125,6 +131,11 @@ scope.launch {
 * **Database Safety:** I learned that `SharedPreferences` is good for simple high scores, but `Room Database` is necessary for structured user data like passwords and accounts.
 
 ---
+
+## Declaration on AI Usage
+All AI usage in this project complies with the module’s guidelines. 
+AI tools were used strictly for clarification, debugging, and refinement of small code fragments. 
+No AI-generated code or text was submitted without modification, understanding, and integration into the overall application design.
 
 ## How to Run
 1.  Open **Android Studio**.
