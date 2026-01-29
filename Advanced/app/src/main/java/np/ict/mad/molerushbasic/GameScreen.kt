@@ -28,7 +28,6 @@ fun GameScreen(
     onNavigateToLeaderboard: () -> Unit
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     val userDao = remember { AppDatabase.getDatabase(context).userDao() }
 
@@ -57,7 +56,6 @@ fun GameScreen(
 
             launch {
                 val user = userDao.getUser(currentUser)
-
                 if (user != null && score > user.highScore) {
                     userDao.updateScore(currentUser, score)
                     highScore = score
@@ -73,7 +71,13 @@ fun GameScreen(
         if (isPlaying) {
             val randomDelay = Random.nextLong(700, 1000)
             delay(randomDelay)
-            targetIndex = Random.nextInt(9)
+
+            var newIndex: Int
+            do {
+                newIndex = Random.nextInt(9)
+            } while (newIndex == targetIndex)
+
+            targetIndex = newIndex
         }
     }
 
@@ -89,7 +93,7 @@ fun GameScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Whack-A-Mole",
+                text = "Wack-A-Mole",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -158,7 +162,11 @@ fun GameScreen(
                     onClick = {
                         if (isPlaying && index == targetIndex) {
                             score++
-                            targetIndex = Random.nextInt(9)
+                            var newIndex: Int
+                            do {
+                                newIndex = Random.nextInt(9)
+                            } while (newIndex == targetIndex)
+                            targetIndex = newIndex
                         }
                     }
                 )
